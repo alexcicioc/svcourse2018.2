@@ -1,13 +1,48 @@
+body {
+    color: #776e65;
+    font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
 #grid-container {
-    width: 800px;
-    height: 800px;
-    border: 1px solid red;
+    width: 500px;
+    height: 500px;
+    border-radius: 6px;
     margin: auto;
+    background: #bbada0;
 }
 
 .grid-cell {
-    width: 198px;
-    height: 198px;
-    border: 1px solid blue;
+    width: 106.25px;
+    height: 106.25px;
     float: left;
+    background: rgba(238, 228, 218, 0.35);
+    margin-top: 15px;
+    margin-left: 15px;
+    border-radius: 6px;
+    font-size: 55px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 107px;
+    box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0);
+}
+
+#score {
+    width: 200px;
+    margin: auto;
+}
+
+#score span {
+    color: red;
+}
+
+.tile-2 {
+    background: #eee4da;
+}
+
+.tile-4 {
+    background: #ede0c8;
+}
+
+#controls {
+    text-align: center;
 }
