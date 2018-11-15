@@ -26,11 +26,9 @@ function getRandomNumber(maxValue) {
 
 function changeTileValue(x, y, newValue) {
     const cell = gridArray[x][y];
-    console.l
     let tileElement;
-    console.log(cell);
+    
     if (cell.has("div").length > 0) {
-        console.log('has div');
         tileElement = cell.children()[0];
     } else {
         tileElement = $('<div></div>');
