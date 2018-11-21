@@ -1,14 +1,16 @@
 const gridArray = [];
+let gridTileLocks = [];
 
 $('.grid-row').each(function (rowIndex, rowElement) {
     gridArray[rowIndex] = [];
-    $(rowElement).children().each(function (cellIndex, cellElement) {
-        gridArray[rowIndex].push($(cellElement));
+    $(rowElement).children().each(function (columnIndex, cellElement) {
+        const tile = new Tile(rowIndex, columnIndex, $(cellElement))
+        gridArray[rowIndex].push(tile);
     })
 });
 
 function getRandomTileValue() {
-    const randomNumber = getRandomNumber(10);
+    const randomNumber = getRandomNumber(9);
 
     if (randomNumber < 9) {
         return 2;
@@ -18,35 +20,18 @@ function getRandomTileValue() {
 }
 
 function getRandomNumber(maxValue) {
-    const randomNumber = Math.random() * maxValue;
+    const randomNumber = Math.random() * (maxValue + 1);
     const roundedDownNumber = Math.floor(randomNumber);
 
     return roundedDownNumber;
-}
-
-function changeTileValue(x, y, newValue) {
-    const cell = gridArray[x][y];
-    let tileElement;
-    
-    if (cell.has("div").length > 0) {
-        tileElement = cell.children()[0];
-    } else {
-        tileElement = $('<div></div>');
-    }
-    tileElement.addClass('tile-' + newValue);
-    tileElement.text(newValue);
-    tileElement.hide();
-    cell.html(tileElement);
-    tileElement.fadeIn();
 }
 
 function addTile() {
     const x = getRandomNumber(3);
     const y = getRandomNumber(3);
     const randomTileValue = getRandomTileValue();
-
-    if (!gridArray[x][y].text()) {
-        changeTileValue(x, y, randomTileValue)
+    if (!gridArray[x][y].getTileValue()) {
+        gridArray[x][y].setTileValue(randomTileValue)
     } else {
         if ($('div[class^="grid-cell tile-"]').length >= 16) {
             console.log('s-a umplut gridul');
@@ -96,6 +81,8 @@ $(document).keydown(function (e) {
     if (movementHappended) {
         addTile();
     }
+
+    gridTileLocks = [];
 });
 
 function goDown() {
@@ -103,14 +90,8 @@ function goDown() {
 
     for (let x = 2; x >= 0; x--) {
         for (let y = 0; y <= 3; y++) {
-            const currentElement = gridArray[x][y];
-            const nextElement = gridArray[x + 1][y];
-
-            const currentElementValue = currentElement.text();
-            const nextElementValue = nextElement.text();
-
-            if (canWeMergeTiles(currentElementValue, nextElementValue)) {
-                mergeTiles(currentElement, nextElement);
+            if (canWeMergeTiles(x, y, x + 1, y)) {
+                mergeTiles(x, y, x + 1, y);
                 movementHappended = true;
             }
 
@@ -124,14 +105,9 @@ function goUp() {
 
     for (let x = 1; x < 4; x++) {
         for (let y = 0; y <= 3; y++) {
-            const currentElement = gridArray[x][y];
-            const nextElement = gridArray[x - 1][y];
 
-            const currentElementValue = currentElement.text();
-            const nextElementValue = nextElement.text();
-
-            if (canWeMergeTiles(currentElementValue, nextElementValue)) {
-                mergeTiles(currentElement, nextElement);
+            if (canWeMergeTiles(x, y, x - 1, y)) {
+                mergeTiles(x, y, x - 1, y);
                 movementHappended = true;
             }
 
@@ -145,14 +121,9 @@ function goRight() {
 
     for (let x = 0; x < 4; x++) {
         for (let y = 2; y >= 0; y--) {
-            const currentElement = gridArray[x][y];
-            const nextElement = gridArray[x][y + 1];
 
-            const currentElementValue = currentElement.text();
-            const nextElementValue = nextElement.text();
-
-            if (canWeMergeTiles(currentElementValue, nextElementValue)) {
-                mergeTiles(currentElement, nextElement);
+            if (canWeMergeTiles(x, y, x, y + 1)) {
+                mergeTiles(x, y, x, y + 1);
                 movementHappended = true;
             }
 
@@ -167,14 +138,9 @@ function goLeft() {
 
     for (let x = 0; x < 4; x++) {
         for (let y = 1; y < 4; y++) {
-            const currentElement = gridArray[x][y];
-            const nextElement = gridArray[x][y - 1];
 
-            const currentElementValue = currentElement.text();
-            const nextElementValue = nextElement.text();
-
-            if (canWeMergeTiles(currentElementValue, nextElementValue)) {
-                mergeTiles(currentElement, nextElement);
+            if (canWeMergeTiles(x, y, x, y - 1)) {
+                mergeTiles(x, y, x, y - 1);
                 movementHappended = true;
             }
 
@@ -184,36 +150,51 @@ function goLeft() {
     return movementHappended;
 }
 
-function canWeMergeTiles(currentElementValue, nextElementValue) {
-    if (currentElementValue == 0) {
+function isTileLocked(x, y) {
+    return gridTileLocks[x] !== undefined && gridTileLocks[x][y] === true;
+}
+
+function lockTile(x, y) {
+    if (!gridTileLocks[x]) {
+        gridTileLocks[x] = [];
+    }
+    gridTileLocks[x][y] = true;
+}
+
+function canWeMergeTiles(x1, y1, x2, y2) {
+    const currentElementValue = gridArray[x1][y1].getTileValue();
+    const nextElementValue = gridArray[x2][y2].getTileValue();
+
+    if (currentElementValue === 0) {
         return false;
     }
 
-    if (nextElementValue == 0) {
+    if (nextElementValue === 0) {
         return true;
     }
 
-    if (nextElementValue == currentElementValue) {
+    if (nextElementValue !== 0 && isTileLocked(x2, y2)) {
+        return false;
+    }
+
+    if (nextElementValue === currentElementValue) {
         return true;
     }
 
     return false;
 }
 
-function mergeTiles(currentElement, nextElement) {
-    const currentElementValue = currentElement.text() ? parseInt(currentElement.text()) : 0;
-    const nextElementValue = nextElement.text() ? parseInt(nextElement.text()) : 0;
-    const nextValue = currentElementValue + nextElementValue;
-    const nextClassName = 'tile-' + nextValue;
+function mergeTiles(x1, y1, x2, y2) {
+    const currentElementValue = gridArray[x1][y1].getTileValue();
+    const nextElementValue = gridArray[x2][y2].getTileValue();
 
-    // nextElement.hide();
-    nextElement.text(nextValue);
-    nextElement.addClass(nextClassName);
-    nextElement.removeClass('tile-' + nextElementValue);
-    // nextElement.fadeIn('fast');
+    gridArray[x1][y1].setTileValue(0);
+    gridArray[x2][y2].setTileValue(currentElementValue + nextElementValue);
 
-    // currentElement.hide();
-    currentElement.text('');
-    currentElement.removeClass('tile-' + currentElementValue);
-    // currentElement.fadeIn('fast');
+    if (nextElementValue > 0) {
+        lockTile(x2, y2);
+    } else if (isTileLocked(x1, y1)) {
+        gridTileLocks[x1][y1] = false;
+        lockTile(x2, y2);
+    }
 }
