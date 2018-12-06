@@ -1,20 +1,40 @@
 class Grid {
 
-    constructor() {
+    constructor(score) {
         this.gridArray = [];
         this.gridTileLocks = [];
         this.gridHistory = [];
+        this.score = score;
         this.initializeGrid();
     }
 
     initializeGrid() {
+
+        // setCookie('2048_grid', JSON.stringify(currentState));
+        const rawCookie = getCookie('2048_grid');
+        let gridCookie = null;
+
+        if (rawCookie) {
+            gridCookie = JSON.parse(rawCookie);
+        }
+
+        console.log(gridCookie);
+
         $('.grid-row').each((rowIndex, rowElement) => {
             this.gridArray[rowIndex] = [];
             $(rowElement).children().each((columnIndex, cellElement) => {
-                const tile = new Tile(rowIndex, columnIndex, $(cellElement));
+                const tileValue = gridCookie ? gridCookie[rowIndex][columnIndex] : 0;
+                const tile = new Tile(rowIndex, columnIndex, $(cellElement), tileValue);
                 this.gridArray[rowIndex].push(tile);
             })
         });
+
+        if (!gridCookie) {
+            this.addTile();
+            this.addTile();
+        }
+
+        this.saveToHistory();
     }
 
     saveToHistory() {
@@ -32,6 +52,7 @@ class Grid {
         if (this.gridHistory.length > 11) {
             this.gridHistory.shift();
         }
+        setCookie('2048_grid', JSON.stringify(currentState));
     }
 
     undo() {
@@ -83,7 +104,9 @@ class Grid {
             return true;
         }
 
-        if (nextElementValue !== 0 && this.isTileLocked(x2, y2)) {
+        if (nextElementValue !== 0
+            && (this.isTileLocked(x1, y1) || this.isTileLocked(x2, y2))
+        ) {
             return false;
         }
 
@@ -104,6 +127,7 @@ class Grid {
 
         if (nextElementValue > 0) {
             this.lockTile(x2, y2);
+            this.score.incrementScore(newValue);
         } else if (this.isTileLocked(x1, y1)) {
             this.gridTileLocks[x1][y1] = false;
             this.lockTile(x2, y2);

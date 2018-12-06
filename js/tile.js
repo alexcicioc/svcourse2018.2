@@ -3,7 +3,7 @@ class Tile {
         this.x = x;
         this.y = y;
         this.element = jqueryElement;
-        this.value = value;
+        this.setTileValue(value);
     }
 
     getTileValue() {

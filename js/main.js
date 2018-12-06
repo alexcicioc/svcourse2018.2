@@ -1,4 +1,5 @@
-const grid = new Grid();
+const score = new Score();
+const grid = new Grid(score);
 const movement = new Movement(grid);
 
 function getRandomTileValue() {
@@ -23,12 +24,6 @@ function finishTurn() {
     grid.resetLocks();
     grid.saveToHistory();
 }
-
-$(document).ready(function () {
-    grid.addTile();
-    grid.addTile();
-    grid.saveToHistory();
-});
 
 function getDirection(key) {
     switch (key) {
