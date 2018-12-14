@@ -14,7 +14,7 @@
 * Aplicatie pe mobile de learning: https://play.google.com/store/apps/details?id=com.sololearn&fbclid=IwAR2zUVvs0wNkjuMqY9bPczLszh6Pc6p08h1Pl2WTyTvpTxkus5U1Rn1F6IM
 
 
-## Cursul 1
+# Cursul 1
 
 ### Cod cursul 1:
 https://github.com/alexcicioc/svcourse2018.2/commit/ba4917c3bbb021d869cfa19dbfd589672676b0a4
