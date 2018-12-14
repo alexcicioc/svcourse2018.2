@@ -10,6 +10,8 @@
 #### Sau cu javascript standard:
 * https://www.w3schools.com/js/js_htmldom.asp
 
+### Recursivitate:
+* https://medium.com/@zfrisch/understanding-recursion-in-javascript-992e96449e03?fbclid=IwAR1goQPssiJcMu3cxbtAJkTt5YbBD8lTdAE2qEn_GVWRakgoFGWxBJyO82s
 
 #### Cerinte:
 * Creati 2 clase noi de CSS ca sa formateze tile-urile de 2 si de 4 
