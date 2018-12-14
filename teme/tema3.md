@@ -9,3 +9,8 @@ Un tile se poate muta in directia dorita daca:
 
 Temele ca de obicei se urca pe google drive:
 https://drive.google.com/drive/folders/1VjztP2WjwpjCIhM0sJAKx8AXLMU4j9dZ?fbclid=IwAR3a9w-Op0o4ovkwUkN2PZ9aZhdQfTdPxunQKPvAWkRYDD06hPs61uTVDc8
+
+
+### Tips:
+* https://stackoverflow.com/questions/13878759/jquery-match-part-of-class-with-hasclass?fbclid=IwAR199zP7jKHpq5fhp7EJiYocfKBXBDBF9PGQ4DVKsyTai29l--kMAc7fB18
+* https://www.facebook.com/groups/sv.bm.dev/permalink/1286325038175494/
